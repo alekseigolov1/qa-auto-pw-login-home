@@ -22,7 +22,7 @@ test.describe( "Login", () => {
         await expect(signInButton).toBeEnabled()
     });
 
-    test('Check for error messages for login input', async ({ page }) => {
+    test('Check for error messages for empty fields', async ({ page }) => {
         const inputUsername = page.getByTestId("username-input")
         const inputPassword = page.getByTestId("password-input")
 
@@ -33,6 +33,19 @@ test.describe( "Login", () => {
         await inputPassword.fill("test")
         await inputUsername.fill("")
         await inputPassword.fill("")
+        await expect(inputUsernameEmptyErrorMessage).toBeVisible()
+        await expect(inputPasswordEmptyErrorMessage).toBeVisible()
+    });
+
+    test('Check for error messages for short input', async ({ page }) => {
+        const inputUsername = page.getByTestId("username-input")
+        const inputPassword = page.getByTestId("password-input")
+
+        const inputUsernameEmptyErrorMessage = page.getByText('The field must contain at least of characters: 2')
+        const inputPasswordEmptyErrorMessage = page.getByText("The field must contain at least of characters: 8")
+
+        await inputUsername.fill("t")
+        await inputPassword.fill("test")
         await expect(inputUsernameEmptyErrorMessage).toBeVisible()
         await expect(inputPasswordEmptyErrorMessage).toBeVisible()
     });
