@@ -1,36 +1,56 @@
-import {expect, test} from '@playwright/test'
+import {expect, Locator, Page, test} from '@playwright/test'
+import { faker } from '@faker-js/faker';
 
-test.describe( "Login", () => {
+import "../config"
+
+const fakerCriteriaObjectPasswordShort = { length: { min: 1, max: 7 } }
+const fakerCriteriaObjectUsernameShort = { length: { min: 1, max: 1 } }
+const fakerCriteriaObject = { length: { min: 8, max: 15 } }
+const errorString = "The field must contain at least of characters"
+const URL = process.env.APP_URL
+
+test.describe( "Testing of Login error messaging", () => {
+
+    function selectElements(page: Page) {
+        inputUsername = page.getByTestId("username-input")
+        inputPassword = page.getByTestId("password-input")
+        signInButton = page.getByTestId("signIn-button")
+        errorPopUpMessage = page.getByTestId("authorizationError-popup")
+        closeButton = page.getByTestId("authorizationError-popup-close-button")
+        inputUsernameEmptyErrorMessage = page.getByTestId('username-input-error').first()
+        inputPasswordEmptyErrorMessage = page.getByTestId('username-input-error').nth(1)
+        inputUsernameShortErrorMessage = page.getByText(`${errorString}: 2`)
+        inputPasswordShortErrorMessage = page.getByText(`${errorString}: 8`)
+    }
+
+    let inputUsername: Locator
+    let inputPassword: Locator
+    let signInButton: Locator
+    let errorPopUpMessage: Locator
+    let closeButton: Locator
+    let inputUsernameEmptyErrorMessage: Locator
+    let inputPasswordEmptyErrorMessage: Locator
+    let inputUsernameShortErrorMessage: Locator
+    let inputPasswordShortErrorMessage: Locator
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('https://fe-delivery.tallinn-learning.ee/signin');
+        await page.goto(URL);
     })
 
     test('Check for incorrect credentials message and close popup message', async ({ page }) => {
-        const inputUsername = page.getByTestId("username-input")
-        const inputPassword = page.getByTestId("password-input")
-        const signInButton = page.getByTestId("signIn-button")
-        const errorPopUpMessage = page.getByTestId("authorizationError-popup")
-        const closeButton = page.getByTestId("authorizationError-popup-close-button")
-
-        await inputUsername.fill("incorrectUsername")
-        await inputPassword.fill("incorrectPassword")
+       selectElements(page)
+        await inputUsername.fill(faker.string.alpha(fakerCriteriaObject))
+        await inputPassword.fill(faker.string.alphanumeric(fakerCriteriaObject))
         await signInButton.click()
         await expect(errorPopUpMessage).toBeVisible()
-
         await closeButton.click()
         await expect(signInButton).toBeEnabled()
     });
 
     test('Check for error messages for empty fields', async ({ page }) => {
-        const inputUsername = page.getByTestId("username-input")
-        const inputPassword = page.getByTestId("password-input")
-
-        const inputUsernameEmptyErrorMessage = page.getByTestId('username-input-error').first()
-        const inputPasswordEmptyErrorMessage = page.getByTestId('username-input-error').nth(1)
-
-        await inputUsername.fill("test")
-        await inputPassword.fill("test")
+        selectElements(page)
+        await inputUsername.fill(faker.string.alpha(fakerCriteriaObject))
+        await inputPassword.fill(faker.string.alphanumeric(fakerCriteriaObject))
         await inputUsername.fill("")
         await inputPassword.fill("")
         await expect(inputUsernameEmptyErrorMessage).toBeVisible()
@@ -38,15 +58,10 @@ test.describe( "Login", () => {
     });
 
     test('Check for error messages for short input', async ({ page }) => {
-        const inputUsername = page.getByTestId("username-input")
-        const inputPassword = page.getByTestId("password-input")
-
-        const inputUsernameEmptyErrorMessage = page.getByText('The field must contain at least of characters: 2')
-        const inputPasswordEmptyErrorMessage = page.getByText("The field must contain at least of characters: 8")
-
-        await inputUsername.fill("t")
-        await inputPassword.fill("test")
-        await expect(inputUsernameEmptyErrorMessage).toBeVisible()
-        await expect(inputPasswordEmptyErrorMessage).toBeVisible()
+        selectElements(page)
+        await inputUsername.fill(faker.string.alpha(fakerCriteriaObjectUsernameShort))
+        await inputPassword.fill(faker.string.alphanumeric(fakerCriteriaObjectPasswordShort))
+        await expect(inputUsernameShortErrorMessage).toBeVisible()
+        await expect(inputPasswordShortErrorMessage).toBeVisible()
     });
 })
