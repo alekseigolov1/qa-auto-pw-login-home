@@ -22,5 +22,18 @@ test.describe( "Login", () => {
         await expect(signInButton).toBeEnabled()
     });
 
+    test('Check for error messages for login input', async ({ page }) => {
+        const inputUsername = page.getByTestId("username-input")
+        const inputPassword = page.getByTestId("password-input")
 
+        const inputUsernameEmptyErrorMessage = page.getByTestId('username-input-error').first()
+        const inputPasswordEmptyErrorMessage = page.getByTestId('username-input-error').nth(1)
+
+        await inputUsername.fill("test")
+        await inputPassword.fill("test")
+        await inputUsername.fill("")
+        await inputPassword.fill("")
+        await expect(inputUsernameEmptyErrorMessage).toBeVisible()
+        await expect(inputPasswordEmptyErrorMessage).toBeVisible()
+    });
 })
