@@ -1,13 +1,21 @@
-# Login 
+# UI testing with Playwright
 
-## Test scenarios
+## What
 
-1. Check for error messages for empty fields
-2. Check for error messages for short input
-3. Check for incorrect credentials message and close popup message
+A small project containing 3 tests of the UI of a login component with Playwright as part of a course on QA automation (lesson 16). Three browser engines tested: Chromium, Webkit, Firefox.
 
-data-name="username-input"
-data-name="password-input"
-data-name="signIn-button"
-data-name="authorizationError-popup"
-data-name="authorizationError-popup-close-button"
+## How to set up the project
+
+In the console run the following command to install the project dependencies:
+
+```
+npm i
+```
+
+## Run project
+
+In the console run the following command to run the Playwright tests:
+
+```
+npm test
+```

@@ -1,10 +1,13 @@
 import {expect, Locator, Page, test} from '@playwright/test'
 import { faker } from '@faker-js/faker';
 
+import "../config"
+
 const fakerCriteriaObjectPasswordShort = { length: { min: 1, max: 7 } }
 const fakerCriteriaObjectUsernameShort = { length: { min: 1, max: 1 } }
 const fakerCriteriaObject = { length: { min: 8, max: 15 } }
 const errorString = "The field must contain at least of characters"
+const URL = process.env.APP_URL
 
 test.describe( "Testing of Login error messaging", () => {
 
@@ -31,7 +34,7 @@ test.describe( "Testing of Login error messaging", () => {
     let inputPasswordShortErrorMessage: Locator
 
     test.beforeEach(async ({ page }) => {
-        await page.goto('https://fe-delivery.tallinn-learning.ee/signin');
+        await page.goto(URL);
     })
 
     test('Check for incorrect credentials message and close popup message', async ({ page }) => {
